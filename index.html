@@ -1,0 +1,155 @@
+<html>
+  <head>
+  
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+      }
+
+      #lists {
+        display: flex;
+      }
+
+      #lists > div {
+        flex: 0 33%;
+        margin: 10px;
+        border: 2px solid lightcoral;
+      }
+
+      p:hover {
+        cursor: pointer;
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+        height: 50px;
+      }
+
+      button {
+        box-sizing: border-box;
+        padding: 5px 15px;
+        margin-top: 10px;
+        background: none;
+        border: 1px solid slateblue;
+        border-radius: 10px;
+        transition: all 0.5s ease;
+      }
+
+      button:hover {
+        cursor: pointer;
+        background-color: slateblue;
+        color: white;
+      }
+
+      button:focus {
+        outline: 0;
+      }
+
+      .selected {
+        background: slateblue;
+      }
+    </style>
+    <body>
+      <body>
+        <h1>Acme First, Second, Third</h1>
+        <div id="lists">
+          <div id="first">
+            <button class="move-right">></button>
+            <h1>First</h1>
+          </div>
+          <div id="second">
+            <button class=move-left"><</button>
+            <button class="move-right">></button>
+            <h1>Second</h1>
+           
+          </div>
+          <div id="third">
+            <button class="move-left"><</button>
+            <h1>Third</h1>
+          </div>
+        </div>
+      </body>
+
+      <script>
+        const lists = document.getElementById("lists");
+        const listChildren = [...lists.children];
+        
+        const slot = ['first', 'second', 'third']
+        const users = [
+          { id: 1, name: "moe", slot: "first"},
+          { id: 2, name: "larry", slot: "second"},
+          { id: 3, name: "curly", slot: "third" },
+          { id: 4, name: "lucy", slot: "first", selected: true },
+        ];
+
+        function appendUsers() {
+          clearUsers()
+          users.map((user) => { 
+            const userElement = document.createElement('p')
+            userElement.innerHTML = user.name
+            userElement.id = user.id
+            if(user.selected) {
+              userElement.selected = 'selected'
+            }
+            listChildren.forEach((child) => {
+              if(child.id === user.slot) {
+                child.appendChild(userElement)
+                
+              }
+            })
+          })
+        }
+
+        function clearUsers() {
+          listChildren.forEach((child) => {
+            [...child.children].forEach((childElem) => {
+              if(childElem.nodeName === 'P') {
+                child.removeChild(childElem);
+              }
+            })
+          })
+        }
+
+        lists.addEventListener("click", (event) => {
+      if (event.target.nodeName === "P") {
+        if (event.target.className === "selected") {
+          event.target.className = "";
+          event.target.selected = false;
+        } else {
+          event.target.className = "selected";
+          event.target.selected = true;
+        }
+      }
+    })
+
+        lists.addEventListener("click", (event) => {
+      if (event.target.nodeName === "BUTTON") {
+        const parentNode = event.target.parentElement;
+        const nextParent = parentNode.nextElementSibling;
+        const previousParent = parentNode.previousElementSibling;
+        const boxChildren = [...event.target.parentElement.children];
+        boxChildren.forEach((child) => {
+          if (child.nodeName === "P" && child.className === "selected") {
+            if (event.target.className === "move-right") {
+              users[child.id - 1].slot = nextParent.id;
+             
+            } else if (event.target.className === "move-left") {
+              users[child.id - 1].slot = previousParent.id;
+              
+            }
+          }
+          appendUsers();
+        });
+      }
+        
+        })
+
+        appendUsers();
+      </script>
+    </body>
+  </head>
+</html>
